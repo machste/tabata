@@ -1,5 +1,8 @@
 *.pyc
-/prepare
-/rest
-/work
+/*.egg-info/
+/build/
+/dist/
+/prepare/
+/rest/
+/work/
 /venv/

@@ -28,7 +28,7 @@ class StdSequence(Sequence):
 
 
 class Creator(object):
-	"""Tabata Creator Command Line Tool.
+	"""Tabata Creator Command Line Tool
 
 	The Tabata Creator helps you putting together and mixing your preferenced
 	music for your own Tabata Training.
@@ -69,8 +69,13 @@ class Creator(object):
 		self.run(self.args)
 
 
-### MAIN PROGRAM
+def main():
+	"""Main Program
 
-if __name__ == "__main__":
+	This is the entry point for the 'tabata' console script.
+	"""
 	creator = Creator()
 	creator.start()
+
+if __name__ == "__main__":
+	main()
