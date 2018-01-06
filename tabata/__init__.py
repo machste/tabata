@@ -1,58 +1,16 @@
-import os
+class Config(object):
+
+	def __init__(self):
+		# Parameters for the standard sequence 
+		self.cycles = 8
+		self.prepare_time = 5
+		self.prepare_path = "./prepare"
+		self.work_time = 45
+		self.work_path = "./work"
+		self.rest_time = 15
+		self.rest_path = "./rest"
+		# Parameters for building the tabata
+		self.temp_dir = None
 
 
-class Block(object):
-
-	def __init__(self, name):
-		self.name = name
-
-	def play(self):
-		raise NotImplementedError
-
-	def __str__(self):
-		return "%s: %s" % (type(self).__name__, self.name)
-
-
-class Exercise(Block):
-
-	def __init__(self, name, time, sound_path=None):
-		super(Exercise, self).__init__(name)
-		self.time = float(time)
-		self.sound_path = sound_path or os.path.abspath(self.name)
-
-	def play(self):
-		print(self)
-
-	def __str__(self):
-		return "Exercise: %s (%s s from '%s')" % (self.name, self.time,
-				self.sound_path)
-
-
-class Sequence(Block):
-
-	def __init__(self, name):
-		super(Sequence, self).__init__(name)
-		self.blocks = []
-
-	def add_block(self, block):
-		if not isinstance(block, Block):
-			raise TypeError("%s is not of type 'Block'")
-		self.blocks.append(block)
-
-	def play(self):
-		for block in self.blocks:
-			block.play()
-
-
-class Loop(Sequence):
-
-	def __init__(self, name, cycles):
-		super(Loop, self).__init__(name)
-		self.cycles = int(cycles)
-
-	def play(self):
-		for i in range(self.cycles):
-			super(Loop, self).play()
-
-	def __str__(self):
-		return "Loop: %s (%s cycles)" % (self.name, self.cycles)
+global_config = Config()
