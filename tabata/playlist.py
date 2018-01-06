@@ -1,3 +1,6 @@
+from sox import Transformer
+
+
 class Playlist(object):
 
 	def __init__(self, path):
