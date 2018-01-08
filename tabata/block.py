@@ -1,3 +1,10 @@
+import logging
+
+from sox import Transformer
+
+_log = logging.getLogger(__name__)
+
+
 class Block(object):
 
 	def __init__(self, name):
@@ -21,10 +28,13 @@ class Exercise(Block):
 		self.playlist = playlist
 
 	def build(self):
-		pass
+		return self.playlist.get_slice(self.time)
 
 	def play(self):
-		print(self)
+		player = Transformer()
+		audio_file = self.build()
+		_log.info(self)
+		player.preview(audio_file)
 
 	def __str__(self):
 		return "Exercise: %s (%s s from '%s')" % (self.name, self.time,

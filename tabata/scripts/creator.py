@@ -1,9 +1,13 @@
+import logging
+
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from inspect import cleandoc
 
 from tabata import global_config
 from tabata.block import Exercise, Sequence, Loop
 from tabata.playlist import Playlist
+
+_log = logging.getLogger(__name__)
 
 
 class Creator(object):
@@ -15,6 +19,7 @@ class Creator(object):
 
 	def __init__(self):
 		self.cfg = global_config
+		self.playlists = []
 		self.root_block = None
 		self.parser = ArgumentParser(prog="tabata",
 				formatter_class=RawDescriptionHelpFormatter,
@@ -37,36 +42,50 @@ class Creator(object):
 		# Parse the command line options
 		args = parser.parse_args()
 		# Put parsed arguments to the tabata configuration
-		self.cycles = args.cycles
-		self.prepare_time = args.prepare_time
-		self.work_time = args.work_time
-		self.rest_time = args.rest_time
+		self.cfg.cycles = args.cycles
+		self.cfg.prepare_time = args.prepare_time
+		self.cfg.work_time = args.work_time
+		self.cfg.rest_time = args.rest_time
 
 	def create_std_sequence(self, cfg):
+		# Create needed playlist for prepare, work and rest exercises
+		prepare_playlist = Playlist("prepare", cfg.prepare_path, cfg.temp_dir)
+		work_playlist = Playlist("work", cfg.work_path, cfg.temp_dir)
+		rest_playlist = Playlist("rest", cfg.rest_path, cfg.temp_dir)
+		self.playlists.extend([prepare_playlist, work_playlist, rest_playlist])
+		# Create the standard tabata sequence
 		std_seq = Sequence("Standard Tabata")
 		# Create the prepare exercise and add it to the sequence
-		prepare = Exercise("Prepare", cfg.prepare_time,
-				Playlist(cfg.prepare_path))
+		prepare = Exercise("Prepare", cfg.prepare_time, prepare_playlist)
 		std_seq.add_block(prepare)
 		## Create the main loop
 		main_loop = Loop("Main Loop", cfg.cycles)
 		# Create the work exercise and add it to the main loop
-		work = Exercise("Work", cfg.work_time, Playlist(cfg.work_path))
+		work = Exercise("Work", cfg.work_time, work_playlist)
 		main_loop.add_block(work)
 		# Create the rest exercise and add it to the main loop
-		rest = Exercise("Rest", cfg.rest_time, Playlist(cfg.rest_path))
+		rest = Exercise("Rest", cfg.rest_time, rest_playlist)
 		main_loop.add_block(rest)
 		std_seq.add_block(main_loop)
 		return std_seq
 
 	def run(self, cfg):
 		self.root_block = self.create_std_sequence(cfg)
+		_log.info("Play Tabata ...")
 		self.root_block.play()
+
+	def cleanup(self):
+		self.cfg.cleanup()
 
 	def start(self):
 		self.init_parser(self.parser)
 		self.parse(self.parser)
-		self.run(self.cfg)
+		try:
+			self.run(self.cfg)
+		except KeyboardInterrupt:
+			_log.warn("Aborted by user!")
+		finally:
+			self.cleanup()
 
 
 def main():
@@ -74,6 +93,7 @@ def main():
 
 	This is the entry point for the 'tabata' console script.
 	"""
+	logging.basicConfig()
 	creator = Creator()
 	creator.start()
 
