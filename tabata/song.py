@@ -1,5 +1,7 @@
 import sox
 
+from tabata.utils import format_time
+
 
 class Song(object):
 
@@ -12,4 +14,4 @@ class Song(object):
 		self.duration = sox.file_info.duration(self.filepath)
 
 	def __str__(self):
-		return "Song: %s (%is)" % (self.filepath, self.duration)
+		return "Song: %s (%ss)" % (self.filepath, format_time(self.duration))

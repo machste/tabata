@@ -4,6 +4,7 @@ import os
 from sox import Transformer
 
 from tabata.song import Song
+from tabata.utils import format_time
 
 _log = logging.getLogger(__name__)
 
@@ -68,14 +69,14 @@ class Playlist(object):
 				self.song_time = self.begin_guard_time
 				end_time = self.song_time + duration
 				song = self.get_current_song()
-		_log.debug("Slice '%s' %i - %is" % (song.filepath, self.song_time,
-				end_time))
+		_log.debug("Slice '%s' %s - %ss" % (song.filepath,
+				format_time(self.song_time), format_time(end_time)))
 		# Get slice out the song
 		slicer = Transformer()
 		slicer.trim(self.song_time, end_time)
 		slicer.fade(self.fade_in_time, self.fade_out_time)
 		slicer.build(song.filepath, out_file)
-		_log.debug("Built '%s' (%is)" % (out_file, duration))
+		_log.debug("Built '%s' (%ss)" % (out_file, format_time(duration)))
 		self.song_time = end_time
 		self.slice_idx += 1
 		return out_file

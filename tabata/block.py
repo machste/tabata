@@ -2,6 +2,8 @@ import logging
 
 from sox import Transformer
 
+from tabata.utils import format_time
+
 _log = logging.getLogger(__name__)
 
 
@@ -37,8 +39,8 @@ class Exercise(Block):
 		player.preview(audio_file)
 
 	def __str__(self):
-		return "Exercise: %s (%s s from '%s')" % (self.name, self.time,
-				self.playlist.path)
+		return "Exercise: %s (%ss from '%s')" % (self.name,
+				format_time(self.time), self.playlist.path)
 
 
 class Sequence(Block):
