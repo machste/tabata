@@ -18,8 +18,8 @@ class Playlist(object):
 		self.temp_dir = temp_dir
 		self.begin_guard_time = 10
 		self.end_guard_time = 10
-		self.fade_in_time = 2
-		self.fade_out_time = 2
+		self.fade_in_time = 1
+		self.fade_out_time = 1
 		self.songs = []
 		self.load_songs()
 		self.reset()
@@ -27,6 +27,7 @@ class Playlist(object):
 	def load_songs(self):
 		for f in os.listdir(self.path):
 			song = Song(os.path.join(self.path, f))
+			song.load_infos()
 			if song.duration > 0:
 				_log.debug("Append '%s' to '%s'" % (song, self.name))
 				self.songs.append(song)
@@ -45,6 +46,8 @@ class Playlist(object):
 		# Generate file name for slice
 		file_name = "%s_%i.wav" % (self.name, self.slice_idx)
 		out_file = os.path.join(self.temp_dir, file_name)
+		# Calculate duration and fade in and out time
+		duration += (self.fade_in_time + self.fade_out_time) / 2
 		# Apply guard time at the beginning of the song
 		if self.song_time < self.begin_guard_time:
 			self.song_time = self.begin_guard_time
@@ -79,4 +82,9 @@ class Playlist(object):
 		_log.debug("Built '%s' (%ss)" % (out_file, format_time(duration)))
 		self.song_time = end_time
 		self.slice_idx += 1
-		return out_file
+		# Put together song information and return it
+		song = Song(out_file)
+		song.duration = duration
+		song.fade_in_time = self.fade_in_time
+		song.fade_out_time = self.fade_out_time
+		return song

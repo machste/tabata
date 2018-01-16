@@ -1,7 +1,5 @@
 import logging
 
-from sox import Transformer
-
 from tabata.utils import format_time
 
 _log = logging.getLogger(__name__)
@@ -33,14 +31,13 @@ class Exercise(Block):
 		return self.playlist.get_slice(self.time)
 
 	def play(self):
-		player = Transformer()
-		audio_file = self.build()
-		_log.info(self)
-		player.preview(audio_file)
+		song = self.build()
+		_log.info("Play: %s" % self)
+		song.play()
 
 	def __str__(self):
-		return "Exercise: %s (%ss from '%s')" % (self.name,
-				format_time(self.time), self.playlist.path)
+		return "%s (%ss from '%s')" % (self.name, format_time(self.time),
+				self.playlist.path)
 
 
 class Sequence(Block):
@@ -53,6 +50,11 @@ class Sequence(Block):
 		if not isinstance(block, Block):
 			raise TypeError("%s is not of type 'Block'")
 		self.blocks.append(block)
+
+	def build(self):
+		slices = []
+		for block in self.blocks:
+			block.build()
 
 	def play(self):
 		for block in self.blocks:
