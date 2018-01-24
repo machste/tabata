@@ -42,10 +42,11 @@ class Playlist(object):
 	def get_current_song(self):
 		return self.songs[self.song_idx]
 
-	def get_slice(self, duration):
-		# Generate file name for slice
-		file_name = "%s_%i.wav" % (self.name, self.slice_idx)
-		out_file = os.path.join(self.temp_dir, file_name)
+	def get_slice(self, duration, out_file=None):
+		if out_file == None:
+			# Generate file name for slice
+			file_name = "%s_%i.wav" % (self.name, self.slice_idx)
+			out_file = os.path.join(self.temp_dir, file_name)
 		# Calculate duration and fade in and out time
 		duration += (self.fade_in_time + self.fade_out_time) / 2
 		# Apply guard time at the beginning of the song

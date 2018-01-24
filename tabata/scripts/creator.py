@@ -54,17 +54,17 @@ class Creator(object):
 		rest_playlist = Playlist("rest", cfg.rest_path, cfg.temp_dir)
 		self.playlists.extend([prepare_playlist, work_playlist, rest_playlist])
 		# Create the standard tabata sequence
-		std_seq = Sequence("Standard Tabata")
+		std_seq = Sequence("standard_tabata")
 		# Create the prepare exercise and add it to the sequence
 		prepare = Exercise("Prepare", cfg.prepare_time, prepare_playlist)
 		std_seq.add_block(prepare)
 		## Create the main loop
-		main_loop = Loop("Main Loop", cfg.cycles)
+		main_loop = Loop("main_loop", cfg.cycles)
 		# Create the work exercise and add it to the main loop
-		work = Exercise("Work", cfg.work_time, work_playlist)
+		work = Exercise("work", cfg.work_time, work_playlist)
 		main_loop.add_block(work)
 		# Create the rest exercise and add it to the main loop
-		rest = Exercise("Rest", cfg.rest_time, rest_playlist)
+		rest = Exercise("rest", cfg.rest_time, rest_playlist)
 		main_loop.add_block(rest)
 		std_seq.add_block(main_loop)
 		return std_seq
