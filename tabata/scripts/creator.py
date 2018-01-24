@@ -6,6 +6,7 @@ from inspect import cleandoc
 from tabata import global_config
 from tabata.block import Exercise, Sequence, Loop
 from tabata.playlist import Playlist
+from tabata.error import Error
 
 _log = logging.getLogger(__name__)
 
@@ -84,6 +85,8 @@ class Creator(object):
 			self.run(self.cfg)
 		except KeyboardInterrupt:
 			_log.warn("Aborted by user!")
+		except Error as e:
+			_log.error(e.message)
 		finally:
 			self.cleanup()
 

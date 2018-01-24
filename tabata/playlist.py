@@ -5,6 +5,7 @@ from sox import Transformer
 
 from tabata.song import Song
 from tabata.utils import format_time
+from tabata.error import Error
 
 _log = logging.getLogger(__name__)
 
@@ -25,12 +26,18 @@ class Playlist(object):
 		self.reset()
 
 	def load_songs(self):
+		if not os.path.isdir(self.path):
+			raise Error("Folder '%s' for %s playlist does not exist!" %
+					(self.path, self.name))
 		for f in os.listdir(self.path):
 			song = Song(os.path.join(self.path, f))
 			song.load_infos()
 			if song.duration > 0:
 				_log.debug("Append '%s' to '%s'" % (song, self.name))
 				self.songs.append(song)
+		if len(self.songs) <= 0:
+			raise Error("No songs found in folder '%s' for %s playlist!" %
+					(self.path, self.name))
 		if self.sort_songs:
 			self.songs.sort(key=lambda song: song.filepath)
 
