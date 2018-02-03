@@ -14,7 +14,11 @@ class Song(object):
 		self.fade_out_time = 0
 
 	def load_infos(self):
-		self.duration = sox.file_info.duration(self.filepath)
+		try:
+			self.duration = sox.file_info.duration(self.filepath)
+		except sox.SoxiError:
+			_log.warn("Unable to determine duration of '%s'!" % self.filepath)
+			self.duration = -1
 
 	def play(self):
 		player = sox.Transformer()
