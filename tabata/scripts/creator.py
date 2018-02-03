@@ -38,6 +38,9 @@ class Creator(object):
 		parser.add_argument("-r", "--rest-time", type=float, metavar="TIME",
 				help="Set the duration of the rest exercise in seconds.",
 				default=self.cfg.rest_time)
+		parser.add_argument("outfilepath", metavar="OUTFILE", nargs="?",
+				help="Define the output file to which the tabata is written. "
+				"If no file is defined the tabata will be instantly played.")
 
 	def parse(self, parser):
 		# Parse the command line options
@@ -47,6 +50,7 @@ class Creator(object):
 		self.cfg.prepare_time = args.prepare_time
 		self.cfg.work_time = args.work_time
 		self.cfg.rest_time = args.rest_time
+		self.cfg.outfilepath = args.outfilepath
 
 	def create_std_sequence(self, cfg):
 		# Create needed playlist for prepare, work and rest exercises
@@ -73,7 +77,10 @@ class Creator(object):
 	def run(self, cfg):
 		self.root_block = self.create_std_sequence(cfg)
 		_log.info("Play Tabata ...")
-		self.root_block.play()
+		if cfg.outfilepath is None:
+			self.root_block.play()
+		else:
+			self.root_block.build(cfg.outfilepath)
 
 	def cleanup(self):
 		self.cfg.cleanup()

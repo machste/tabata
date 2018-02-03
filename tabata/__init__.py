@@ -16,6 +16,7 @@ class Config(object):
 		self.rest_path = "./rest"
 		# Parameters for building the tabata
 		self._temp_dir = None
+		self.outfilepath = None
 
 	@property
 	def temp_dir(self):
